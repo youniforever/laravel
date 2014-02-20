@@ -9,7 +9,7 @@ class BbsController extends \BaseController {
 	public function index()
 	{
 		$bbs_list = Bbs::all();
-		return View::make('bbs/bbs')->with("bbs_list", $bbs_list);
+		return View::make('bbs/list')->with("bbs_list", $bbs_list);
 	}
 	
 	/**

@@ -19,23 +19,27 @@
 
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"
 	type="text/javascript"></script>
-<script>
-$(document).ready(function() {
-	$(".check-all").click(function() {
-		if ( $(this).is(":checked") === true ) {
-			$(".check-bbs").attr("checked", true);
-		}
-		else {
-			$(".check-bbs").attr("checked", false);
-		}
+<script type="text/javascript">
+	$(document).ready(function() {
+		$(".check-all").click(function() {
+			if ( $(this).is(":checked") === true ) {
+				$(".check-bbs").attr("checked", true);
+			}
+			else {
+				$(".check-bbs").attr("checked", false);
+			}
+		});
+	
+		/* Button Events */
+		$(".btn-write").click(function() {
+			location.href = "/bbs/create";
+		});
+		
+		$(".btn-del").click(function() {
+			$(".frm").submit();
+		});
 	});
-
-	/* Button Events */
-	$(".btn-write").click(function() {
-		$(".frm").submit();
-	});
-});
-</script>
+	</script>
 
 <body>
 
@@ -131,31 +135,38 @@ $(document).ready(function() {
 	</div>
 
 
-	<form class="frm form-horizontal" method="post" action="/bbs" role="form">
-		<div class="form-group">
-			<label for="inputPassword" class="col-sm-2 control-label">제목</label>
-			<div class="col-sm-6">
-				<input type="input" class="form-control" id="inputPassword" name="title" placeholder="제목">
-			</div>
-		</div>
-		<div class="form-group">
-			<label for="inputPassword" class="col-sm-2 control-label">내용</label>
-			<div class="col-sm-8">
-				<textarea class="form-control" rows="3" name="content" placeholder="내용"></textarea>
-			</div>
-		</div>
-		<div class="form-group">
-			<label for="inputPassword" class="col-sm-2 control-label">작성자</label>
-			<div class="col-sm-4">
-				<input type=""input"" class="form-control" id="inputPassword" name="writer" placeholder="작성자명">
-			</div>
-		</div>
-		<div class="form-group">
-			<p class="text-center">
-				<button type="button" class="btn btn-primary btn-write">작성완료</button>
-			</p>
-		</div>
-	</form>
+	<table class="table table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><input type="checkbox" class="check-all" /></th>
+				<th>글제목</th>
+				<th>글내용</th>
+				<th>글쓴이</th>
+				<th>작성시간</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ( $bbs_list as $seq => $bbs ) { ?>
+			<tr>
+				<td><input type="checkbox" class="check-bbs" name="bbs_id"
+					value="&lt;?=$bbs-&gt;id?&gt;" /></td>
+				<td><?=$bbs->title?></td>
+				<td><?=mb_strcut($bbs->content, 0, 20)?></td>
+				<td><?=$bbs->writer?></td>
+				<td><?=date("Y-m-d H:i:s", $bbs->update_date)?></td>
+			</tr>
+			<?php } ?>
+		</tbody>
+	</table>
 	
+	<p class="text-center">
+	[1]
+	</p>
+	
+	<p class="text-right">
+		<button class="btn btn-write">글쓰기</button>
+		<button class="btn btn-del">삭제</button>
+	</p>
+
 </body>
 </html>
