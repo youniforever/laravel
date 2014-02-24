@@ -21,24 +21,24 @@
 		<div class="form-group">
 			<label for="inputPassword" class="col-sm-2 control-label">제목</label>
 			<div class="col-sm-6">
-				<input type="input" class="form-control" id="inputPassword" name="title" placeholder="제목">
+				<input type="input" class="form-control" id="inputPassword" name="title" value="{{ $bbs_info->bbs_row->title }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="inputPassword" class="col-sm-2 control-label">내용</label>
 			<div class="col-sm-8">
-				<textarea class="form-control" rows="3" name="content" placeholder="내용"></textarea>
+				<textarea class="form-control" rows="3" name="content">{{ $bbs_info->bbs_row->content }}</textarea>
 			</div>
 		</div>
 		<div class="form-group">
 			<label for="inputPassword" class="col-sm-2 control-label">작성자</label>
 			<div class="col-sm-4">
-				<input type="input" class="form-control" id="inputPassword" name="writer" placeholder="작성자명">
+				<input type="input" class="form-control" id="inputPassword" name="writer" value="{{ $bbs_info->bbs_row->writer }}">
 			</div>
 		</div>
 		<div class="form-group">
 			<p class="text-center">
-				<button type="button" class="btn btn-primary btn-write">작성완료</button>
+				<button type="button" class="btn btn-primary btn-write">수정완료</button>
 			</p>
 		</div>
 	</form>

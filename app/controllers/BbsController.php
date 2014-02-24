@@ -1,111 +1,119 @@
 <?php
-class BbsController extends \BaseController {
-
-	protected $layout = "layouts.master";
-	
+use Illuminate\Support\Facades\Redirect;
+class BbsController extends \BaseController
+{
 	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
+	 * 기본 레이아웃을 정의합니다.
+	 * @example
+	 *    layouts 디렉토리 아래에 master.blade.php 파일이 기본 레이아웃인 경우,
+	 *    layouts.master와 같이 정의합니다.
+	 * @var String
+	 */
+	protected $layout = "layouts.master";
+
+	/**
+	 * URI가 기본 alias만 정의 된 경우 alias와 매핑된 Controller의 index메서드를 호출하게 됩니다.
 	 */
 	public function index()
 	{
-		$bbs_list = Bbs::all();
+		$bbs = new Bbs();
+		$bbs_list = $bbs->bbs_list ();
 		
-		$bbs_info = array();
-		$bbs_info['list'] = $bbs_list;
-		$this->layout->content = View::make('bbs/list')->with("bbs_list", (object) $bbs_info);
+		$bbs_info = array ();
+		$bbs_info ['links'] = $bbs_list->links();
+		
+		$this->layout->content = View::make ( 'bbs/list' )->with ( "bbs_list", ( object ) $bbs_info );
 	}
-	
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-	{
-		$this->layout->content = View::make('bbs/write');
-	}
-	
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
-	public function store()
-	{
-		$getTitle = Input::get("title");
-		$getContent = Input::get("content");
-		$getWriter = Input::get("writer");
 
-		if ( ! empty($getTitle) && ! empty($getContent) && ! empty($getWriter) ) {
-			$sql = "INSERT INTO bbs (title, content, writer, update_date) VALUES (?, ?, ?, ?)";
-			$result = DB::insert($sql, array($getTitle, $getContent, Crypt::encrypt($getWriter), time()));
+	/**
+	 * 글목록 데이터를 Ajax요청에 대한 응답을 처리합니다.
+	 * @return Objects
+	 */
+	public function getBbsData()
+	{
+		$bbs = new Bbs();
+		$bbs_list = $bbs->bbs_list ();
+		
+		$response = array();
+		$response['list'] = $bbs_list->toArray();
+		
+		$bbs_list->setBaseUrl("#");
+		$response['links'] = $bbs_list->links()->render();
+		
+		return Response::json ( $response );
+	}
+	
+	/**
+	 * 글쓰기뷰를 호출합니다.
+	 */
+	public function getWrite()
+	{
+		$this->layout->content = View::make ( 'bbs/write' );
+	}
+	
+	public function act($bbs_id = null, $type = null)
+	{
+		$bbs_info = array();
+		$bbs_info['bbs_id'] = $bbs_id;
+		$bbs = new Bbs();
+		$bbs_row = $bbs->bbs_list_row ( $bbs_id );
+		$bbs_info['bbs_row'] = $bbs_row[0];
+		$this->layout->content = View::make ( 'bbs/mod' )->with ("bbs_info", (object) $bbs_info);
+	}
+	
+	/**
+	 * 글쓰기뷰의 요청을 처리합니다.
+	 * @return Redirect
+	 */
+	public function postWriteOk()
+	{
+		$getTitle = Input::get ( "title" );
+		$getContent = Input::get ( "content" );
+		$getWriter = Input::get ( "writer" );
+
+		$bbs = new Bbs();
+		$ins_bbs_data = array (
+				"title" => $getTitle,
+				"writer" => $getWriter,
+				"update_date" => time () 
+		);
+		$bbs_id = $bbs->save_ok ( $ins_bbs_data );
+		
+		$bbs_content = new BbsContent ();
+		$bbs_content->bbs_id = $bbs_id;
+		$bbs_content->content = $getContent;
+		$result = $bbs_content->save ();
+		
+		if ($result) {
+			return Redirect::to ( '/bbs' );
+		}
+	}
+
+	/**
+	 * 리스트뷰의 삭제요청을 처리합니다.
+	 * @return boolean
+	 */
+	public function postDelete()
+	{
+		$getBbsIds = Input::get ( "bbs_id" );
+		
+		$result = true;
+		if (count ( $getBbsIds ) > 0) {
+			DB::beginTransaction ();
 			
-			if ( $result ) {
-				return Redirect::to('/bbs');
+			$bbs = new Bbs();
+			$bbs_content = new BbsContent();
+			$rs_bbs = $bbs->list_delete ( $getBbsIds );
+			$rs_bbs_content = $bbs_content->list_delete ( $getBbsIds );
+			
+			if ( $rs_bbs && $rs_bbs_content ) {
+				DB::commit();
+			}
+			else {
+				DB::rollback();
 			}
 		}
-		else {
-			return Redirect::to('/bbs');
-		}
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-	{
-		echo "asdf";
-		//
-	}
-
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function update($id)
-	{
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function destroy($id)
-	{
-		$getWriter = Input::get("writer");
 		
-		$sql = "INSERT INTO bbs (title, content, writer, update_date) VALUES (?, ?, ?, ?)";
-		$result = DB::insert($sql, array($getTitle, $getContent, $getWriter, time()));
-		
-		if ( $result ) {
-			return Redirect::to('/bbs');
-		}
+		return Response::make ( json_encode ( $result ) );
 	}
 }
-
-// class Libraries extends Controller {
-// 	static function getData() {
-// 		return 123;
-// 	}
-// }

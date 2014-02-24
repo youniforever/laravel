@@ -11,7 +11,8 @@ class BootstrapPresenter extends Presenter {
 	 */
 	public function getPageLinkWrapper($url, $page)
 	{
-		return '<li><a href="'.$url.'">'.$page.'</a></li>';
+// 		return '<li><a href="'.$url.'">'.$page.'</a></li>';
+		return '<li><span class="btn btn-page" value="'.$page.'">'.$page.'</span></li>';
 	}
 
 	/**

@@ -17,4 +17,16 @@ Route::get('/', function()
 });
 
 
+/**
+ * Controllers and Resources Route
+ */
+// Route::get("bbs/{bbs_id}/mod", function($bbs_id) {
+// 	return $bbs_id;
+// });
+Route::get("bbs/{bbs_id}/{type?}", array('as' => 'act', 'uses' => 'BbsController@act'))
+->where ( array (
+		"bbs_id" => "[0-9]+",
+		"type" => "[a-z]+"
+) );
+Route::controller('bbs', 'BbsController');
 Route::resource('bbs', 'BbsController');
