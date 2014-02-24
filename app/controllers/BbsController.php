@@ -9,7 +9,7 @@ class BbsController extends \BaseController
 	 *    layouts.master와 같이 정의합니다.
 	 * @var String
 	 */
-	protected $layout = "layouts.master";
+	protected $layout = "layouts.main";
 
 	/**
 	 * URI가 기본 alias만 정의 된 경우 alias와 매핑된 Controller의 index메서드를 호출하게 됩니다.
