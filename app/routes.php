@@ -1,30 +1,26 @@
 <?php
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the Closure to execute when that URI is requested.
-|
-*/
-
-Route::get('/', function()
-{
- 	return View::make('layouts.master');
-});
-
-Route::controller('home', 'HomeController');
-Route::resource('home', 'HomeController');
-
 /**
  * Controllers and Resources Route
+ * 
+ * Route::resource
+ * 		컨트롤러에 index메서드 호출
+ * 
+ * Route::controller
+ * 		컨트롤러에 요청메서드 호출
+ * 
+ * Route::get
+ * 		URI 라우트
+ * 
  */
-// Route::get("bbs/{bbs_id}/mod", function($bbs_id) {
-// 	return $bbs_id;
-// });
+
+/***** /home *****/
+Route::get('/', function()
+{
+	return Redirect::to('home');
+});
+Route::resource('home', 'HomeController');
+
+/***** /bbs *****/
 Route::get("bbs/{bbs_id}/{type?}", array('as' => 'act', 'uses' => 'BbsController@act'))
 ->where ( array (
 		"bbs_id" => "[0-9]+",
@@ -32,3 +28,6 @@ Route::get("bbs/{bbs_id}/{type?}", array('as' => 'act', 'uses' => 'BbsController
 ) );
 Route::controller('bbs', 'BbsController');
 Route::resource('bbs', 'BbsController');
+
+/***** /contact *****/
+Route::resource('contact', 'ContactController');
