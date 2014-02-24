@@ -58,7 +58,17 @@ class BbsController extends \BaseController
 		$bbs = new Bbs();
 		$bbs_row = $bbs->bbs_list_row ( $bbs_id );
 		$bbs_info['bbs_row'] = $bbs_row[0];
-		$this->layout->content = View::make ( 'bbs/mod' )->with ("bbs_info", (object) $bbs_info);
+		
+		switch ( $type ) {
+			case "mod" :
+				$view_name = "bbs/mod";
+				break;
+			default :
+				$view_name = "bbs/content";
+				break;
+		}
+		
+		$this->layout->content = View::make ( $view_name )->with ("bbs_info", (object) $bbs_info);
 	}
 	
 	/**
@@ -87,6 +97,36 @@ class BbsController extends \BaseController
 		if ($result) {
 			return Redirect::to ( '/bbs' );
 		}
+	}
+	
+	/**
+	 * 글수정뷰의 요청을 처리합니다.
+	 * @return Redirect
+	 */
+	public function postModifyOk()
+	{
+		$getBbsId = Input::get ( "bbs_id" );
+		$getTitle = Input::get ( "title" );
+		$getContent = Input::get ( "content" );
+		$getWriter = Input::get ( "writer" );
+	
+		$ins_bbs_data = array (
+				"id" => $getBbsId,
+				"title" => $getTitle,
+				"writer" => $getWriter,
+				"update_date" => time ()
+		);
+		$bbs = new Bbs();
+		$result = $bbs->modify_ok ( $ins_bbs_data );
+		
+		$ins_bbs_content_data = array (
+				"bbs_id" => $getBbsId,
+				"content" => $getContent
+		);
+		$bbs_content = new BbsContent ();
+		$result = $bbs_content->modify_ok ( $ins_bbs_content_data );
+	
+		return Redirect::to ( '/bbs' );
 	}
 
 	/**

@@ -1,25 +1,8 @@
 @section("content")
 	<script type="text/javascript">
 		$(document).ready(function() {
-			var URI = {
-				parseQuery: function() {
-					var parser = document.createElement('a');
-					parser.href = "http://example.com:3000/pathname/?search=test#hash";
-
-// 					parser.protocol; // => "http:"
-// 					parser.hostname; // => "example.com"
-// 					parser.port;     // => "3000"
-// 					parser.pathname; // => "/pathname/"
-// 					parser.search;   // => "?search=test"
-// 					parser.hash;     // => "#hash"
-// 					parser.host;     // => "example.com:3000"
-
-					return parser.search;
-				},
-			};
-// 			console.log(URI.parseQuery());
-			
 			var page = 1;
+
 			function bbs_list() {
 				$.ajax({
 					url: "/bbs/bbs-data",
@@ -36,7 +19,7 @@
 							$(bbs_lists).each(function(index, bbs_list) {
 								append += '<tr>';
 								append += '<td><input type="checkbox" class="check-bbs" name="bbs_id[]" value="' + bbs_list.id + '" /></td>';
-								append += '<td>' + bbs_list.title + '</td>';
+								append += '<td><a href="/bbs/' + bbs_list.id + '">' + bbs_list.title + '</a></td>';
 								append += '<td>' + bbs_list.content + '</td>';
 								append += '<td>' + bbs_list.writer + '</td>';
 								append += '<td>' + bbs_list.update_date + '</td>';
@@ -61,7 +44,9 @@
 						});
 						
 						$(".ico-bbs-del").click(function() {
-							location.href = "/bbs/" + $(this).attr("bbs_id") + "/del";
+							bbs_id = $(this).attr("bbs_id");
+							$(".check-bbs[value=" + bbs_id + "]").attr("checked", true)
+							bbs_del();
 						});
 
 						$(".pagination .btn-page").click(function() {
@@ -141,7 +126,7 @@
 					<th>글제목</th>
 					<th>글내용</th>
 					<th>글쓴이</th>
-					<th>작성시간</th>
+					<th>작성/수정시간</th>
 					<th>수정</th>
 				</tr>
 			</thead>

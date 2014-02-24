@@ -17,7 +17,8 @@
 	});
 	</script>
 
-	<form class="frm form-horizontal" method="post" action="/bbs/write-ok" role="form">
+	<form class="frm form-horizontal" method="post" action="/bbs/modify-ok" role="form">
+		<input type="hidden" name="bbs_id" value="{{ $bbs_info->bbs_id }}" />
 		<div class="form-group">
 			<label for="inputPassword" class="col-sm-2 control-label">제목</label>
 			<div class="col-sm-6">

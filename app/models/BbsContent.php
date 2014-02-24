@@ -23,4 +23,8 @@ class BbsContent extends Eloquent {
 		
 		return $result;
 	}
+	
+	public function modify_ok($ins_data) {
+		return BbsContent::where ( 'bbs_id', $ins_data['bbs_id'] )->update($ins_data);
+	}
 }
