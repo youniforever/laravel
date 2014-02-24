@@ -16,6 +16,8 @@ Route::get('/', function()
  	return View::make('layouts.master');
 });
 
+Route::controller('home', 'HomeController');
+Route::resource('home', 'HomeController');
 
 /**
  * Controllers and Resources Route
