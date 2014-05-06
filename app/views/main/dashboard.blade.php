@@ -1,4 +1,121 @@
 @layout("layouts.main") @section("content")
+
+<script>
+$(document).ready(function() {
+
+	//	$(".btnJson").click(function() {
+	$(".btnJson").click(function() {
+		var page = "1";
+		$.ajax({
+			url: "/json"
+			, type: "GET"
+			, dataType: "json"
+			, data: {"page": page}
+			, success: function(dt) {
+				/*
+				$(".title").text(dt.title);
+				
+				var append = "";
+				$.each(dt.list, function(idx, row) {
+					append += "<div>[" + idx + "] " + row + "</div>";
+				});
+				
+				$(".list").html(append);
+				*/
+			
+			
+				var append = "";
+				$.each(dt.list, function(idx, row) {
+					append += "<tr>";
+					append += "<td>" + idx + "</td>";
+					append += "<td>" + row + "</td>";
+					append += "</tr>";
+				});
+				
+				$(".tbl tbody").html(append);
+			
+			}
+			, error: function() {
+			}
+		});
+	});
+	
+
+	$(".btnJsonp").click(function() {
+		var page = 1;
+		$.ajax({
+			url: "http://svr2.youniforever.com/jsonp?page=" + page
+			, dataType: "jsonp"
+			, jsonpCallback: "jsonpKey"
+			, success: function(dt) {
+				/*
+				$(".title").text(dt.title);
+				
+				var append = "";
+				$.each(dt.list, function(idx, row) {
+					append += "<div>[" + idx + "] " + row + "</div>";
+				});
+				
+				$(".list").html(append);
+				*/
+			
+			
+				var append = "";
+				$.each(dt.list, function(idx, row) {
+					append += "<tr>";
+					append += "<td>" + idx + "</td>";
+					append += "<td>" + row + "</td>";
+					append += "</tr>";
+				});
+				
+				$(".tbl tbody").html(append);
+			
+			}
+			, error: function() {
+			}
+		});
+	});
+	
+	$.ajax({
+		url: "/api"
+		, type: "post"
+		, dataType: "json"
+		, data: {"page": 1}
+		, success: function(row) {
+			$(".title").text(row.title);
+		}
+		, error: function() {}
+	});
+});
+
+</script>
+
+<button type="button" class="btnJson">Call json</button>
+<button type="button" class="btnJsonp">Call jsonp</button>
+<!--
+<div class="wrap">
+	<div class="title"></div>
+	<div class="list"></div>
+</div>
+-->
+
+<div class="wrap">
+	<table class="tbl" border="1">
+		<thead>
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+			</tr>
+		</thead>
+		<tbody>
+		</tbody>
+	</table>
+	<div style="text-align:center;">
+		<a href="#" class="aPage" page="1">[1]</a>
+		<a href="#" class="aPage" page="2">[2]</a>
+	</div>
+</div>
+
 <div class="span9 section">
 	<p class="well">
 		문법오류나 오역, 오타를 <a

@@ -31,3 +31,7 @@ Route::resource('bbs', 'BbsController');
 
 /***** /contact *****/
 Route::resource('contact', 'ContactController');
+
+Route::resource('jsonp', 'JsonpController');
+
+Route::resource('json', 'JsonController');
